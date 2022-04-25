@@ -20,16 +20,30 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     height: 563,
     useContentSize: true,
-    width: 1000
+    width: 1000,
+    webPreferences: {
+      webSecurity: false
+    }
   })
 
   mainWindow.loadURL(winURL)
+
+  // // Open dev tools initially when in development mode added by adam to fix debug error
+  // if (process.env.NODE_ENV === "development") {
+  //   mainWindow.webContents.on("did-frame-finish-load", () => {
+  //     mainWindow.webContents.once("devtools-opened", () => {
+  //       mainWindow.focus();
+  //     });
+  //     mainWindow.webContents.openDevTools();
+  //   });
+  // }
 
   mainWindow.on('closed', () => {
     mainWindow = null
   })
 }
 
+app.commandLine.appendSwitch('--ignore-certificate-errors', 'true')
 app.on('ready', createWindow)
 
 app.on('window-all-closed', () => {
@@ -43,6 +57,12 @@ app.on('activate', () => {
     createWindow()
   }
 })
+
+// app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {undefined
+//   //允许私有证书
+//   event.preventDefault()
+//   callback(true)
+// });
 
 /**
  * Auto Updater
